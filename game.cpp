@@ -26,7 +26,7 @@ void Game::Clean()
     printf("\e[?25l");
 }
 
-void FpsLock()
+void Game::FpsLock()
 {
 
 }

@@ -2,12 +2,6 @@
 #include <iostream>
 #include "client.hpp"
 
-#ifdef WIN32
-#define CLEAR "clr"
-#else
-#define CLEAR "clear"
-#endif
-
 int main()
 {
     Game* client = new Client();
