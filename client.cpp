@@ -1,15 +1,20 @@
 ﻿#include "client.hpp"
 
+// инициализация переменных игры
 void Client::Start()
 {
-    // GOTO: инициализация переменных игры
+    setlocale(LC_ALL, 0);
+    std::cout << "Введите размер игрового поля: "; std::cin >> fieldSize;
+    std::cout << std::endl;
+    system(CLEAR);
 }
 
+
+// вывод необходимой информация, главный метод игры
 void Client::Update()
 {
-    // GOTO: вывод необходимой информация, главный метод игры
     printField();
-    std::cout << "Please enter x position: ";
+    std::cout << "Введите позицию (число с плавующей запятой) : ";
 }
 
 ////////////////////////////////////////////////////////////////
