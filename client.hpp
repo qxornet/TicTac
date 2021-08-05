@@ -6,7 +6,7 @@
 
 
 #ifdef WIN32
-#define CLEAR "clr"
+#define CLEAR "cls"
 #else
 #define CLEAR "clear"
 #endif
@@ -28,8 +28,8 @@ private:
 
 private:
 
-    int fieldSize = 0;
-
+    int fieldCount = 0;
+    
 };
 
 #endif // CLIENT_H

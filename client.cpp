@@ -4,8 +4,10 @@
 void Client::Start()
 {
     setlocale(LC_ALL, 0);
-    std::cout << "Введите размер игрового поля: "; std::cin >> fieldSize;
+    std::cout << "Введите размер игрового поля: "; 
+        std::cin >> fieldCount;
     std::cout << std::endl;
+    createMap(fieldCount);
     system(CLEAR);
 }
 
@@ -13,19 +15,9 @@ void Client::Start()
 // вывод необходимой информация, главный метод игры
 void Client::Update()
 {
-    printField();
+    printMap();
     std::cout << "Введите позицию (число с плавующей запятой) : ";
 }
 
 ////////////////////////////////////////////////////////////////
 
-void Client::printField()
-{
-    std::cout << "-------" << std::endl
-              << "| | | |" << std::endl
-              << "-------" << std::endl
-              << "| | | |" << std::endl
-              << "-------" << std::endl
-              << "| | | |" << std::endl
-              << "-------" << std::endl;
-}
