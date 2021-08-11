@@ -26,7 +26,7 @@ void Game::Clean()
     #ifdef WIN32
         ShowCursor(false);
     #else
-        printf("\e[?25l");
+      //  printf("\e[?25l");
     #endif
 }
 
@@ -39,26 +39,43 @@ void Game::createMap(int size)
 {
     mapSize = size;
 
-    map = new bool*[size];
+    map = new int*[size];
     for(int i = 0; i < size; i++)
-        map[i] = new bool[size];
+    {
+        map[i] = new int[size];
+        for(int j = 0; j < size; j++)
+            map[i][j] = 0;
+    }
+
 }
 
 void Game::printMap()
 {
+    std::cout << "Y";
     for(int i = 0; i < mapSize; i++)
-      std::cout << "__";
+      std::cout << " _";
 
     std::cout << std::endl;
 
     for(int i = 0; i < mapSize; i++)
     {
+        std::cout << i+1;
+
         for(int j = 0; j < mapSize; j++)
         {
-            std::cout << "|_";
+            char symbol;
+            switch (map[i][j])
+            {
+            case 1: symbol = 'X'; break;
+            case 2: symbol = 'O'; break;
+            default: symbol = '_'; break;
+            }
+
+            std::cout << "|" << symbol; 
         }
         std::cout << "|" << std::endl;
     }
+    std::cout << std::endl;
 }
 
 Game::~Game()

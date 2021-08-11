@@ -2,8 +2,10 @@
 #define CLIENT_HPP
 
 #include <locale>
-#include "game.hpp"
+#include <cmath>
+#include <iomanip>
 
+#include "game.hpp"
 
 #ifdef WIN32
 #define CLEAR "cls"
@@ -24,11 +26,19 @@ public:
 
 private:
 
-    void printField();
+    void setCoord();
+    int makeMove(int y, int x );
+    int enemyMove();
+    int checkState();
 
 private:
 
     int fieldCount = 0;
+    int blocksCount = 0;
+    int allowBlockCount = 0;
+
+    double xCoord;
+    double yCoord;
     
 };
 

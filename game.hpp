@@ -16,7 +16,7 @@ class Game
 public:
 
     Game() = default;
-    ~Game();
+    virtual ~Game();
 
 public:
 
@@ -36,7 +36,7 @@ public:
 
 protected:
 
-    bool** map;
+    int** map;
     int mapSize = 3;
 
     int fpsMax = 60; // максимум FPS
