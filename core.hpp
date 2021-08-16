@@ -1,5 +1,5 @@
-﻿#ifndef GAME_HPP
-#define GAME_HPP
+﻿#ifndef CORE_HPP
+#define CORE_HPP
 
 #include <iostream>
 #include <chrono>
@@ -30,6 +30,8 @@ public:
     void createMap(int size);
     void printMap();
 
+    char getPlayersSymbol(int idx);
+
 public:
 
     int exitCode = 0; // код выхода программы
@@ -48,4 +50,4 @@ private:
     std::chrono::system_clock::time_point lastTime;
 };
 
-#endif // CLIENT_HPP
+#endif // CORE_HPP

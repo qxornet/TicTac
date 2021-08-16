@@ -1,4 +1,4 @@
-﻿#include "game.hpp"
+﻿#include "core.hpp"
 
 void Game::Start()
 {
@@ -63,19 +63,22 @@ void Game::printMap()
 
         for(int j = 0; j < mapSize; j++)
         {
-            char symbol;
-            switch (map[i][j])
-            {
-            case 1: symbol = 'X'; break;
-            case 2: symbol = 'O'; break;
-            default: symbol = '_'; break;
-            }
-
+            char symbol = getPlayersSymbol(map[i][j]);
             std::cout << "|" << symbol; 
         }
         std::cout << "|" << std::endl;
     }
     std::cout << std::endl;
+}
+
+char Game::getPlayersSymbol(int idx)
+{
+    switch (idx)
+    {
+    case 1: return 'X';
+    case 2: return 'O';
+    default: return '_';
+    }
 }
 
 Game::~Game()

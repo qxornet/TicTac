@@ -5,7 +5,7 @@
 int main()
 {
     Game* client = new Client();
-
+    
     client->Start();
     while(client->exitCode == 0)
     {
