@@ -10,11 +10,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(SOURCES client.cpp
-            game.cpp
+            core.cpp
             main.cpp)
 
 set(HEADERS client.hpp
-            game.hpp)
+            core.hpp)
 
 add_executable(TicTac ${SOURCES} ${HEADERS})
 

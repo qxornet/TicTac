@@ -5,7 +5,7 @@
 #include <cmath>
 #include <iomanip>
 
-#include "game.hpp"
+#include "core.hpp"
 
 #ifdef WIN32
 #define CLEAR "cls"
@@ -30,6 +30,10 @@ private:
     int makeMove(int y, int x );
     int enemyMove();
     int checkState();
+    int checkHoriz();
+    int checkVert();
+    int checkDiag();
+    int checkInvDiag();
 
 private:
 
@@ -39,7 +43,12 @@ private:
 
     double xCoord;
     double yCoord;
-    
+
+    int player, enemy; // indicators on field (1 or 2)
+    int playerEnableForWin = 0;
+    int enemyEnableForWin = 0;
+
+    int winCode = 0;
 };
 
 #endif // CLIENT_H
