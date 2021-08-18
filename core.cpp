@@ -37,14 +37,12 @@ void Game::FpsLock()
 
 void Game::createMap(int size)
 {
-    mapSize = size;
 
-    map = new int*[size];
     for(int i = 0; i < size; i++)
     {
-        map[i] = new int[size];
-        for(int j = 0; j < size; j++)
-            map[i][j] = 0;
+        std::vector<int> line;
+        line.resize(size);
+        map.push_back(line);
     }
 
 }
@@ -52,16 +50,16 @@ void Game::createMap(int size)
 void Game::printMap()
 {
     std::cout << "Y";
-    for(int i = 0; i < mapSize; i++)
+    for(int i = 0; i < map.size(); i++)
       std::cout << " _";
 
     std::cout << std::endl;
 
-    for(int i = 0; i < mapSize; i++)
+    for(int i = 0; i < map.size(); i++)
     {
         std::cout << i+1;
 
-        for(int j = 0; j < mapSize; j++)
+        for(int j = 0; j < map.size(); j++)
         {
             char symbol = getPlayersSymbol(map[i][j]);
             std::cout << "|" << symbol; 
@@ -83,8 +81,4 @@ char Game::getPlayersSymbol(int idx)
 
 Game::~Game()
 {
-    for(int i = 0; i < mapSize; i++)
-        delete map[i];
-
-    delete[] map;
 }
