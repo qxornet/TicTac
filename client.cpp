@@ -5,11 +5,12 @@ void Client::Start()
     setlocale(LC_ALL, 0);
     srand( (unsigned)time(NULL) );
     
+    activeTurn = false;
     player = 1 + rand() % 2;
     if(player == 1) enemy = 2;
     else enemy = 1;
 
-    std::cout << player << " Введите размер игрового поля: "; 
+    std::cout <<"Введите размер игрового поля: "; 
         std::cin >> fieldCount;
     std::cout << std::endl;
 
@@ -17,7 +18,7 @@ void Client::Start()
     blocksCount = fieldCount * fieldCount;
     system(CLEAR);
 
-    if(player == 1) this->enemyMove();
+    if(player == 1) activeTurn = true;
 }
 
 void Client::Update()
@@ -31,16 +32,11 @@ void Client::Update()
 
     std::cout << "Вы играете за: " << this->getPlayersSymbol(player) << std::endl; 
     printMap();
-    std::cout << "Введите позицию (формат: y.x): ";
 
-    this->setCoord();
-    if(this->makeMove(yCoord, xCoord) != 0)
-    { 
-        std::getchar();
-        return;
-    }
-    this->enemyMove();
-    if(this->checkState() != 0) 
+    if(activeTurn) playerMove();
+    else this->enemyMove();
+
+    if(this->checkState(map) != 0) 
     {
         system(CLEAR);
         if(winCode == player) std::cout << "PLAYER WIN" << std::endl;
@@ -52,58 +48,59 @@ void Client::Update()
 
 //------------------------------------------------------------------
 
-int Client::makeMove(int y, int x)
+int Client::makeMove(Coordinate coord)
 {
-    if(x > mapSize || y > mapSize) 
+    if(coord.first > map.size() || coord.second > map.size()) 
     {
         std::cout << "Неверная координата, повторите ещё. <Press Enter>";
         return 1;
     }
 
-    if(map[y-1][x-1] != 0)
+    if(map[coord.first-1][coord.second-1] != 0)
     {
-        std::cout << "Эта клетка уже занята . Повторите ещё. <Press Enter> ";
+        std::cout << "Эта клетка уже занята. Повторите ещё. <Press Enter> ";
         return 1;
     }
 
-    map[y-1][x-1] = player;
+    map[coord.first-1][coord.second-1] = player;
     allowBlockCount++;
 
     return 0;
 }
 
-void Client::setCoord()
+Coordinate  Client::setCoord()
 {
     double value = 0.0;
     std::cin >> value; std::cout << std::endl;
     double x = 0, y = 0;
     x = (std::modf(value, &y) * 10.0) + 0.1; 
 
-    xCoord = static_cast<int>(x);
-    yCoord = static_cast<int>(y);
+    int xCoord = static_cast<int>(x),
+        yCoord = static_cast<int>(y);
+
+    return std::make_pair(yCoord, xCoord);
 }
 
-int Client::enemyMove()
+void Client::playerMove()
 {
-/*     int max,min;
-    for(int i = 0; i < fieldCount; i++)
-    {
-        min = map[i][0];
-        for(int j = 1; j < fieldCount; j++)
-        {
-            if(map[i][j] != 0) continue;
-            if(map[i][j]<min) min=map[i][j];
-        }
-        if(i==0) max=min;
-        if(max<min) max=min;
-    }
+    std::cout << "Введите позицию (формат: y.x): ";
 
-    map[max][min] = 2; */
+    if(this->makeMove(this->setCoord()) != 0) 
+        std::getchar();
 
-    while(allowBlockCount < blocksCount)
+    activeTurn = false;
+}
+
+void Client::enemyMove()
+{
+    minimax(map);
+    map[choice.first-1][choice.second-1] = enemy;
+    activeTurn = true;
+
+/*     while(allowBlockCount < blocksCount)
     {
-        int x = 1 + rand() % mapSize;
-        int y = 1 + rand() % mapSize;
+        int x = 1 + rand() % map.size();
+        int y = 1 + rand() % map.size();
 
         if(map[y-1][x-1] != 0) continue;
 
@@ -111,94 +108,145 @@ int Client::enemyMove()
         allowBlockCount++;
         break;
     } 
+ */
 }
 
-int Client::checkState()
+int Client::checkState(MapField _map)
 {
-    if((winCode = checkHoriz()) != 0) return winCode;
-    if((winCode = checkVert()) != 0) return winCode;
-    if((winCode = checkDiag()) != 0) return winCode;
-    if((winCode = checkInvDiag()) != 0) return winCode;
+    if((winCode = checkHoriz(_map)) != 0) return winCode;
+    if((winCode = checkVert(_map)) != 0) return winCode;
+    if((winCode = checkDiag(_map)) != 0) return winCode;
+    if((winCode = checkInvDiag(_map)) != 0) return winCode;
 
     return 0;
 }
 
-int Client::checkHoriz()
+int Client::checkHoriz(MapField _map)
 {
     int playerEnableForWin = 0;
     int enemyEnableForWin = 0;
 
-    for(int i = 0; i < mapSize; i++)
+    for(int i = 0; i < map.size(); i++)
     {
         playerEnableForWin = 0;
         enemyEnableForWin = 0;
         
-        for(int j = 0; j < mapSize; j++)
+        for(int j = 0; j < map.size(); j++)
         {
             if(map[i][j] == player) playerEnableForWin += 1;
             if(map[i][j] == enemy) enemyEnableForWin += 1;
         }
 
-        if(playerEnableForWin == mapSize) return player;
-        if(enemyEnableForWin == mapSize) return enemy;
+        if(playerEnableForWin == map.size()) return player;
+        if(enemyEnableForWin == map.size()) return enemy;
     }
 
     return 0;
 }
 
-int Client::checkVert()
+int Client::checkVert(MapField _map)
 {
     int playerEnableForWin = 0;
     int enemyEnableForWin = 0;
 
-    for(int i = 0; i < mapSize; i++)
+    for(int i = 0; i < map.size(); i++)
     {
         playerEnableForWin = 0;
         enemyEnableForWin = 0;
 
-        for(int j = 0; j < mapSize; j++)
+        for(int j = 0; j < map.size(); j++)
         {
             if(map[j][i] == player) playerEnableForWin += 1;
             if(map[j][i] == enemy) enemyEnableForWin += 1;
         }
 
-        if(playerEnableForWin == mapSize) return player;
-        if(enemyEnableForWin == mapSize) return enemy;
+        if(playerEnableForWin == map.size()) return player;
+        if(enemyEnableForWin == map.size()) return enemy;
     }
 
     return 0;    
 }
 
-int Client::checkDiag()
+int Client::checkDiag(MapField _map)
 {
     int playerEnableForWin = 0;
     int enemyEnableForWin = 0;
 
-    for(int i = 0; i < mapSize; i++)
+    for(int i = 0; i < map.size(); i++)
     {
         if(map[i][i] == player) playerEnableForWin += 1;
         if(map[i][i] == enemy) enemyEnableForWin += 1;
     }
     
-    if(playerEnableForWin == mapSize) return player;
-    if(enemyEnableForWin == mapSize) return enemy;
+    if(playerEnableForWin == map.size()) return player;
+    if(enemyEnableForWin == map.size()) return enemy;
 
     return 0;
 }
 
-int Client::checkInvDiag()
+int Client::checkInvDiag(MapField _map)
 {
     int playerEnableForWin = 0;
     int enemyEnableForWin = 0;
 
-    for(int i = 0, j = mapSize-1; i < mapSize; i++, j--)
+    for(int i = 0, j = map.size()-1; i < map.size(); i++, j--)
     {
         if(map[i][j] == player) playerEnableForWin += 1;
         if(map[i][j] == enemy) enemyEnableForWin += 1;
     }
     
-    if(playerEnableForWin == mapSize) return player;
-    if(enemyEnableForWin == mapSize) return enemy;
+    if(playerEnableForWin == map.size()) return player;
+    if(enemyEnableForWin == map.size()) return enemy;
 
     return 0;
+}
+
+std::vector< Coordinate > Client::getAvailMoves(MapField _map)
+{
+    std::vector< Coordinate > moves;
+    for(int i = 0; i < _map.size(); ++i)
+    {
+        for(int j = 0; j < _map.size(); ++j)
+        {
+            if(map[i][j] == 0)
+            moves.push_back(std::make_pair(i,j));
+        }
+    }
+
+    return moves;
+}
+
+std::variant<Coordinate, int> Client::minimax(MapField _map)
+{
+    checkState(_map);
+
+    std::vector<int> scores;
+    std::vector<Coordinate> moves;
+
+    auto mapMoves = this->getAvailMoves(_map);
+    if(mapMoves.size() <= 0) return 0;
+    
+    for(auto& move : mapMoves) 
+    {
+        MapField buffMap = _map;
+        map[move.first][move.second] = enemy;
+        scores.push_back(std::get<int>(minimax(buffMap)));
+        moves.push_back(move);
+    }  
+
+    if(player == 1)
+    {
+        auto iter = std::max_element(scores.begin(), scores.end());
+        choice = moves[std::distance(scores.begin(), iter)];
+        return *iter;
+    }
+    else
+    {
+        auto iter = std::min_element(scores.begin(), scores.end());
+        choice = moves[std::distance(scores.begin(), iter)];
+        return *iter;
+    }
+
+
+    return std::make_pair(0,0);
 }
